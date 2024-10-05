@@ -43,13 +43,14 @@
       p.text-lg.font-bold.mt-4.text-gray-400
         | Il ne reste {{ remainingTasksCount }} tâche(s) à compléter.
 </template>
-
+  
 <script lang="ts">
 import { mdiPlusCircleOutline } from '@mdi/js';
 import { mdiFilterOutline } from '@mdi/js';
 import { mdiDelete } from '@mdi/js';
 import { mdiPencil } from '@mdi/js';
 import { mdiAlertCircleOutline } from '@mdi/js';
+
 export default {
   data() {
     return {
@@ -80,36 +81,47 @@ export default {
   methods: {
     addTask() {
       if (this.newTask.trim()) {
-        this.tasks.push({
+        const newTask = {
           id: Date.now(),
           title: this.newTask,
           completed: false,
-          isEditing: false // Ajoute un état pour savoir si une tâche est en mode édition
-        });
+          isEditing: false
+        };
+        this.tasks.push(newTask);
+        this.saveTasks();
         this.newTask = '';
-        this.showError = false; // Réinitialiser le message d'erreur
+        this.showError = false;
       } else {
-        this.showError = true; // Afficher l'erreur si la tâche est vide
+        this.showError = true;
       }
     },
     deleteTask(id) {
       this.tasks = this.tasks.filter(task => task.id !== id);
+      this.saveTasks();
     },
     filterTasks(type) {
       this.filter = type;
     },
     editTask(task) {
-      // Activer le mode édition pour cette tâche
       task.isEditing = true;
     },
     saveTask(task) {
-      // Désactiver le mode édition après modification ou en appuyant sur Enter
       task.isEditing = false;
+      this.saveTasks();
+    },
+    saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    },
+    loadTasks() {
+      const tasks = localStorage.getItem('tasks');
+      if (tasks) {
+        this.tasks = JSON.parse(tasks);
+      }
     }
+  },
+  mounted() {
+    this.loadTasks();
   }
 };
 </script>
-
-<style scoped>
-/* Style minimaliste */
-</style>
+  
