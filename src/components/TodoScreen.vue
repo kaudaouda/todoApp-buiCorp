@@ -28,7 +28,7 @@
       ul
         li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(v-for='task in filteredTasks' :key='task.id')
           .flex.items-center
-            input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed')
+            input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed' @change='saveTask(task)')
             span.ml-3.text-lg(v-if='!task.isEditing' :class="{'line-through text-gray-500': task.completed, 'text-gray-800': !task.completed}")
               | {{ task.title }}
             input.ml-3.text-lg.p-2.rounded-lg(v-else v-model='task.title' @keyup.enter='saveTask(task)' class='focus:outline-none focus:ring-2 focus:ring-orange-500')
