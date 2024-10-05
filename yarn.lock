@@ -275,6 +275,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mdi/js@npm:^7.4.47":
+  version: 7.4.47
+  resolution: "@mdi/js@npm:7.4.47"
+  checksum: 10c0/4364d4dff943c630f9cdddba1a74d3713654e4da1b85bc7a307b2285447a57c41434a39a8520b39957df1028186a2e5944102fd1386d6c0c73e709335f5ccb3e
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -784,6 +791,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bui-todo-app-test@workspace:."
   dependencies:
+    "@mdi/js": "npm:^7.4.47"
     "@vitejs/plugin-vue": "npm:^5.1.2"
     autoprefixer: "npm:^10.4.20"
     postcss: "npm:^8.4.47"
@@ -793,6 +801,7 @@ __metadata:
     tailwindcss: "npm:^3.4.13"
     vite: "npm:^5.4.1"
     vue: "npm:^3.4.37"
+    vue-material-design-icons: "npm:^5.3.0"
   languageName: unknown
   linkType: soft
 
@@ -2976,6 +2985,13 @@ __metadata:
   version: 3.1.0
   resolution: "void-elements@npm:3.1.0"
   checksum: 10c0/0b8686f9f9aa44012e9bd5eabf287ae0cde409b9a2854c5a2335cb83920c957668ac5876e3f0d158dd424744ac411a7270e64128556b451ed3bec875ef18534d
+  languageName: node
+  linkType: hard
+
+"vue-material-design-icons@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "vue-material-design-icons@npm:5.3.0"
+  checksum: 10c0/b0948420d978b75fc83b4ae1fcd70f475cc63b3239d6bf28d9159edc531760f70cc9110b452896245684b84f033b5dbaa9bc81c5704213b9aaadc017b1a70c5f
   languageName: node
   linkType: hard
 
