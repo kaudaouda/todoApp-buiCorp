@@ -27,10 +27,9 @@
             .flex.items-center
               input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed')
               
-              // Affichage du titre ou du champ de modification
               span.ml-3.text-lg(v-if='!task.isEditing' :class="{'line-through text-gray-500': task.completed, 'text-gray-800': !task.completed}")
                 | {{ task.title }}
-              input.ml-3.text-lg.p-2(v-else v-model='task.title' @keyup.enter='saveTask(task)')
+              input.ml-3.text-lg.p-2.rounded-lg(v-else v-model='task.title' @keyup.enter='saveTask(task)' class='focus:outline-none focus:ring-2 focus:ring-orange-500')
   
             .flex.space-x-3
               button.text-gray-400.transition-colors(@click='editTask(task)' v-if='!task.isEditing')
