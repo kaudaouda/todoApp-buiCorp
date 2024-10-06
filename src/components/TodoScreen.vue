@@ -25,10 +25,12 @@
             | Tâches terminées
           button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="filterTasks('incomplete')" :class="filter === 'incomplete' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
             | Tâches incomplètes
-      ul
-        li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(v-for='task in filteredTasks' :key='task.id')
+
+      // Utilisation de transition-group avec les animations de suppression
+      transition-group(name="task" tag="ul")
+        li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(v-for='task in filteredTasks' :key='task.id' :class="{ 'fade-enter-active': task.completed }")
           .flex.items-center
-            input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed' @change='saveTask(task)')
+            input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed' @change='saveTasks')
             span.ml-3.text-lg(v-if='!task.isEditing' :class="{'line-through text-gray-500': task.completed, 'text-gray-800': !task.completed}")
               | {{ task.title }}
             input.ml-3.text-lg.p-2.rounded-lg(v-else v-model='task.title' @keyup.enter='saveTask(task)' class='focus:outline-none focus:ring-2 focus:ring-orange-500')
@@ -42,6 +44,8 @@
 
       p.text-lg.font-bold.mt-4.text-gray-400
         | Il ne reste {{ remainingTasksCount }} tâche(s) à compléter.
+
+
 </template>
   
 <script lang="ts">
@@ -124,4 +128,26 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/* Transition pour l'ajout et la suppression des tâches */
+.task-enter-active, .task-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.task-enter, .task-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Animation de transition pour le changement de statut (coché/décoché) */
+.fade-enter-active {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.task-completed {
+  background-color: #f0f0f0;
+  color: #999999;
+}
+
+
+</style>
   
