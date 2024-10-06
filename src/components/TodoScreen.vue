@@ -7,16 +7,7 @@
       .error-container.w-full.flex.justify-center.items-center.my-5(v-if="!newTask.trim() && showError")
         icon(:path='mdiAlertCircleOutline' size='36' class='text-red-500')
         p.text-red-500 Le nom de la tâche ne peut pas être vide.
-      .filter-container.flex.space-x-5.items-center
-        .flex.space-x-3.mb-8.items-center
-          p.text-lg.font-regular.text-gray-400 Filtrer
-          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="setFilter('all')" :class="filter === 'all' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
-            | Toutes les tâches
-          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="setFilter('completed')" :class="filter === 'completed' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
-            | Tâches terminées
-          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="setFilter('incomplete')" :class="filter === 'incomplete' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
-            | Tâches incomplètes
-
+      FilterButtons(:filter="filter" @update:filter="setFilter")
       // Utilisation de transition-group avec les animations de suppression
       transition-group(name="task" tag="ul")
         li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(v-for='task in filteredTasks' :key='task.id' :class="{ 'fade-enter-active': task.completed }")
@@ -43,10 +34,12 @@
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 import { mdiFilterOutline, mdiDelete, mdiPencil, mdiAlertCircleOutline } from '@mdi/js';
 import TaskInput from './TaskInput.vue';
+import FilterButtons from './FilterButtons.vue';
 
 export default {
   components: {
-    TaskInput
+    TaskInput,
+    FilterButtons
   },
   data() {
     return {
@@ -56,6 +49,7 @@ export default {
       mdiDelete,
       mdiPencil,
       mdiAlertCircleOutline,
+      currentFilter: 'all', // Valeur initiale du filtre
     };
   },
   computed: {
@@ -86,6 +80,9 @@ export default {
     saveTask(task) {
       this.updateTask({ ...task, isEditing: false });
       this.saveTasks();
+    },
+    updateFilter(newFilter: string) {
+      this.currentFilter = newFilter;
     },
   },
   mounted() {
