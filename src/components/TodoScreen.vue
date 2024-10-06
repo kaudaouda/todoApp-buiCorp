@@ -1,6 +1,6 @@
 <template lang="pug">
-.todoScreen.w-full
-  .bg-red-100.p-8.flex.flex-col.items-center
+.todoScreen.w-full.h-screen.flex.items-center.justify-center
+  .max-w-4xl.w-full
     .w-full.bg-white.shadow-lg.rounded-lg.p-8
       h1.text-3xl.font-bold.text-gray-800.mb-8.text-center My Todo App
       TaskInput(@add-task='addNewTask')

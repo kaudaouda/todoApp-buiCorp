@@ -1,19 +1,20 @@
 <template lang="pug">
-.flex.mb-6.space-x-2
-  input.flex-1.p-3.border.rounded-lg(
+.flex.flex-col.mb-6.space-y-2(class="md:flex-row md:space-y-0 md:space-x-2")
+  input.p-3.border.rounded-lg.w-full(
     v-model='taskInput' 
     type='text' 
     :placeholder='placeholder' 
     class='focus:outline-none focus:ring-2 focus:ring-orange-500'
     @keyup.enter='handleAddTask'
   )
-  button.bg-orange-500.text-white.px-6.py-3.rounded-lg.transition-colors.flex.items-center.justify-center.font-bold(
-    @click='handleAddTask'
-    class='hover:bg-orange-300'
-    :aria-label='buttonLabel'
-  )
-    icon(:path='mdiPlusCircleOutline' size='36' class='text-white')
-    | {{ buttonText }}
+  .flex.justify-center(class="md:justify-start")
+    button.bg-orange-500.text-white.px-6.py-3.rounded-lg.transition-colors.flex.items-center.justify-center.font-bold(
+      @click='handleAddTask'
+      class='hover:bg-orange-300'
+      :aria-label='buttonLabel'
+    )
+      icon(:path='mdiPlusCircleOutline' size='36' class='text-white')
+      | {{ buttonText }}
 </template>
 
 <script lang="ts">
