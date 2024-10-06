@@ -1,6 +1,6 @@
 <template lang="pug">
-.todoScreen.w-full
-  .bg-red-100.p-8.flex.flex-col.items-center
+.todoScreen.w-full.h-screen.flex.items-center.justify-center
+  .max-w-4xl.w-full
     .w-full.bg-white.shadow-lg.rounded-lg.p-8
       h1.text-3xl.font-bold.text-gray-800.mb-8.text-center My Todo App
       TaskInput(@add-task='addNewTask')
@@ -10,20 +10,15 @@
       FilterButtons(:filter="filter" @update:filter="setFilter")
       // Utilisation de transition-group avec les animations de suppression
       transition-group(name="task" tag="ul")
-        li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(v-for='task in filteredTasks' :key='task.id' :class="{ 'fade-enter-active': task.completed }")
-          .flex.items-center
-            input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed' @change='saveTasks')
-            span.ml-3.text-lg(v-if='!task.isEditing' :class="{'line-through text-gray-500': task.completed, 'text-gray-800': !task.completed}")
-              | {{ task.title }}
-            input.ml-3.text-lg.p-2.rounded-lg(v-else v-model='task.title' @keyup.enter='saveTask(task)' class='focus:outline-none focus:ring-2 focus:ring-orange-500')
-          .flex.space-x-3
-            button.text-gray-400.transition-colors(@click='editTask(task)' v-if='!task.isEditing')
-              icon(:path='mdiPencil' size='36' class='text-gray-500')
-            button.bg-orange-500.text-white.px-4.py-2.rounded-lg(@click='saveTask(task)' v-if='task.isEditing' class='hover:bg-orange-300')
-              | Sauvegarder
-            button.text-red-500.transition-colors(@click='removeTask(task.id)' class='hover:text-red-600')
-              icon(:path='mdiDelete' size='36' class='text-red-500')
-
+        TaskItem(
+          v-for='task in filteredTasks'
+          :key='task.id'
+          :task='task'
+          @update-task='saveTasks'
+          @edit-task='editTask'
+          @save-task='saveTask'
+          @remove-task='removeTask'
+        )
       p.text-lg.font-bold.mt-4.text-gray-400
         | Il ne reste {{ remainingTasksCount }} tâche(s) à compléter.
 
@@ -35,11 +30,13 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
 import { mdiFilterOutline, mdiDelete, mdiPencil, mdiAlertCircleOutline } from '@mdi/js';
 import TaskInput from './TaskInput.vue';
 import FilterButtons from './FilterButtons.vue';
+import TaskItem from './TaskItem.vue';
 
 export default {
   components: {
     TaskInput,
-    FilterButtons
+    FilterButtons,
+    TaskItem
   },
   data() {
     return {
@@ -75,15 +72,18 @@ export default {
       this.saveTasks();
     },
     editTask(task) {
-      this.updateTask({ ...task, isEditing: true });
+      task.isEditing = true;
     },
     saveTask(task) {
-      this.updateTask({ ...task, isEditing: false });
+      task.isEditing = false;
       this.saveTasks();
     },
     updateFilter(newFilter: string) {
       this.currentFilter = newFilter;
     },
+    saveTasks() {
+      // Logique pour sauvegarder les tâches
+    }
   },
   mounted() {
     this.loadTasks();
