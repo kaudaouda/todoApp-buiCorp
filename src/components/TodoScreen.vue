@@ -3,16 +3,7 @@
   .bg-red-100.p-8.flex.flex-col.items-center
     .w-full.bg-white.shadow-lg.rounded-lg.p-8
       h1.text-3xl.font-bold.text-gray-800.mb-8.text-center My Todo App
-      .flex.mb-6.space-x-2
-        input.flex-1.p-3.border.rounded-lg(
-          v-model='newTask' 
-          type='text' 
-          placeholder='Ajouter une nouvelle tâche...' 
-          class='focus:outline-none focus:ring-2 focus:ring-orange-500' @keyup.enter='addNewTask'
-        )
-        button.bg-orange-500.text-white.px-6.py-3.rounded-lg.transition-colors.flex.items-center.justify-center.font-bold(@click='addNewTask' class='hover:bg-orange-300' aria-label='Ajouter une tâche')
-          icon(:path='mdiPlusCircleOutline' size='36' class='text-white') 
-          | Ajouter
+      TaskInput(@add-task='addNewTask')
       .error-container.w-full.flex.justify-center.items-center.my-5(v-if="!newTask.trim() && showError")
         icon(:path='mdiAlertCircleOutline' size='36' class='text-red-500')
         p.text-red-500 Le nom de la tâche ne peut pas être vide.
@@ -50,14 +41,17 @@
   
 <script lang="ts">
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
-import { mdiPlusCircleOutline, mdiFilterOutline, mdiDelete, mdiPencil, mdiAlertCircleOutline } from '@mdi/js';
+import { mdiFilterOutline, mdiDelete, mdiPencil, mdiAlertCircleOutline } from '@mdi/js';
+import TaskInput from './TaskInput.vue';
 
 export default {
+  components: {
+    TaskInput
+  },
   data() {
     return {
       newTask: '',
       showError: false,
-      mdiPlusCircleOutline,
       mdiFilterOutline,
       mdiDelete,
       mdiPencil,
@@ -71,21 +65,16 @@ export default {
   methods: {
     ...mapMutations(['addTask', 'deleteTask', 'updateTask', 'setFilter']),
     ...mapActions(['loadTasks', 'saveTasks']),
-    addNewTask() {
-      if (this.newTask.trim()) {
-        const newTask = {
-          id: Date.now(),
-          title: this.newTask,
-          completed: false,
-          isEditing: false
-        };
-        this.addTask(newTask);
-        this.saveTasks();
-        this.newTask = '';
-        this.showError = false;
-      } else {
-        this.showError = true;
-      }
+    addNewTask(taskTitle) {
+      const newTask = {
+        id: Date.now(),
+        title: taskTitle,
+        completed: false,
+        isEditing: false
+      };
+      this.addTask(newTask);
+      this.saveTasks();
+      this.showError = false;
     },
     removeTask(id) {
       this.deleteTask(id);
