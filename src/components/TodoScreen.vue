@@ -8,9 +8,9 @@
           v-model='newTask' 
           type='text' 
           placeholder='Ajouter une nouvelle tâche...' 
-          class='focus:outline-none focus:ring-2 focus:ring-orange-500' @keyup.enter='addTask'
+          class='focus:outline-none focus:ring-2 focus:ring-orange-500' @keyup.enter='addNewTask'
         )
-        button.bg-orange-500.text-white.px-6.py-3.rounded-lg.transition-colors.flex.items-center.justify-center.font-bold(@click='addTask' class='hover:bg-orange-300' aria-label='Ajouter une tâche')
+        button.bg-orange-500.text-white.px-6.py-3.rounded-lg.transition-colors.flex.items-center.justify-center.font-bold(@click='addNewTask' class='hover:bg-orange-300' aria-label='Ajouter une tâche')
           icon(:path='mdiPlusCircleOutline' size='36' class='text-white') 
           | Ajouter
       .error-container.w-full.flex.justify-center.items-center.my-5(v-if="!newTask.trim() && showError")
@@ -19,16 +19,18 @@
       .filter-container.flex.space-x-5.items-center
         .flex.space-x-3.mb-8.items-center
           p.text-lg.font-regular.text-gray-400 Filtrer
-          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="filterTasks('all')" :class="filter === 'all' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
+          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="setFilter('all')" :class="filter === 'all' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
             | Toutes les tâches
-          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="filterTasks('completed')" :class="filter === 'completed' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
+          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="setFilter('completed')" :class="filter === 'completed' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
             | Tâches terminées
-          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="filterTasks('incomplete')" :class="filter === 'incomplete' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
+          button.bg-gray-400.p-2.rounded-lg.transition-colors(@click="setFilter('incomplete')" :class="filter === 'incomplete' ? 'text-white font-bold bg-black' : 'text-white'" class='hover:text-orange-400 text-xl')
             | Tâches incomplètes
-      ul
-        li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(v-for='task in filteredTasks' :key='task.id')
+
+      // Utilisation de transition-group avec les animations de suppression
+      transition-group(name="task" tag="ul")
+        li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(v-for='task in filteredTasks' :key='task.id' :class="{ 'fade-enter-active': task.completed }")
           .flex.items-center
-            input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed')
+            input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(type='checkbox' v-model='task.completed' @change='saveTasks')
             span.ml-3.text-lg(v-if='!task.isEditing' :class="{'line-through text-gray-500': task.completed, 'text-gray-800': !task.completed}")
               | {{ task.title }}
             input.ml-3.text-lg.p-2.rounded-lg(v-else v-model='task.title' @keyup.enter='saveTask(task)' class='focus:outline-none focus:ring-2 focus:ring-orange-500')
@@ -37,19 +39,18 @@
               icon(:path='mdiPencil' size='36' class='text-gray-500')
             button.bg-orange-500.text-white.px-4.py-2.rounded-lg(@click='saveTask(task)' v-if='task.isEditing' class='hover:bg-orange-300')
               | Sauvegarder
-            button.text-red-500.transition-colors(@click='deleteTask(task.id)' class='hover:text-red-600')
+            button.text-red-500.transition-colors(@click='removeTask(task.id)' class='hover:text-red-600')
               icon(:path='mdiDelete' size='36' class='text-red-500')
 
       p.text-lg.font-bold.mt-4.text-gray-400
         | Il ne reste {{ remainingTasksCount }} tâche(s) à compléter.
+
+
 </template>
   
 <script lang="ts">
-import { mdiPlusCircleOutline } from '@mdi/js';
-import { mdiFilterOutline } from '@mdi/js';
-import { mdiDelete } from '@mdi/js';
-import { mdiPencil } from '@mdi/js';
-import { mdiAlertCircleOutline } from '@mdi/js';
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex';
+import { mdiPlusCircleOutline, mdiFilterOutline, mdiDelete, mdiPencil, mdiAlertCircleOutline } from '@mdi/js';
 
 export default {
   data() {
@@ -61,25 +62,16 @@ export default {
       mdiDelete,
       mdiPencil,
       mdiAlertCircleOutline,
-      tasks: [],
-      filter: 'all',
     };
   },
   computed: {
-    filteredTasks() {
-      if (this.filter === 'completed') {
-        return this.tasks.filter(task => task.completed);
-      } else if (this.filter === 'incomplete') {
-        return this.tasks.filter(task => !task.completed);
-      }
-      return this.tasks;
-    },
-    remainingTasksCount() {
-      return this.tasks.filter(task => !task.completed).length;
-    }
+    ...mapState(['filter']),
+    ...mapGetters(['filteredTasks', 'remainingTasksCount']),
   },
   methods: {
-    addTask() {
+    ...mapMutations(['addTask', 'deleteTask', 'updateTask', 'setFilter']),
+    ...mapActions(['loadTasks', 'saveTasks']),
+    addNewTask() {
       if (this.newTask.trim()) {
         const newTask = {
           id: Date.now(),
@@ -87,7 +79,7 @@ export default {
           completed: false,
           isEditing: false
         };
-        this.tasks.push(newTask);
+        this.addTask(newTask);
         this.saveTasks();
         this.newTask = '';
         this.showError = false;
@@ -95,33 +87,42 @@ export default {
         this.showError = true;
       }
     },
-    deleteTask(id) {
-      this.tasks = this.tasks.filter(task => task.id !== id);
+    removeTask(id) {
+      this.deleteTask(id);
       this.saveTasks();
-    },
-    filterTasks(type) {
-      this.filter = type;
     },
     editTask(task) {
-      task.isEditing = true;
+      this.updateTask({ ...task, isEditing: true });
     },
     saveTask(task) {
-      task.isEditing = false;
+      this.updateTask({ ...task, isEditing: false });
       this.saveTasks();
     },
-    saveTasks() {
-      localStorage.setItem('tasks', JSON.stringify(this.tasks));
-    },
-    loadTasks() {
-      const tasks = localStorage.getItem('tasks');
-      if (tasks) {
-        this.tasks = JSON.parse(tasks);
-      }
-    }
   },
   mounted() {
     this.loadTasks();
   }
 };
 </script>
-  
+
+<style scoped>
+/* Transition pour l'ajout et la suppression des tâches */
+.task-enter-active, .task-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.task-enter, .task-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* Animation de transition pour le changement de statut (coché/décoché) */
+.fade-enter-active {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.task-completed {
+  background-color: #f0f0f0;
+  color: #999999;
+}
+
+
+</style>
