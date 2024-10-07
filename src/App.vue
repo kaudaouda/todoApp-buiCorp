@@ -4,7 +4,7 @@ import TodoScreen from './components/TodoScreen.vue'
 </script>
 
 <template lang="pug">
-  div.homePage.w-full
+  div.homePage.w-full.font-sans
     TodoScreen
 </template>
 

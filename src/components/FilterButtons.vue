@@ -1,14 +1,17 @@
 <template lang="pug">
-.filter-container.flex.space-x-5.items-center
-  .flex.space-x-3.mb-8.items-center
-    p.text-lg.font-regular.text-gray-400 Filtrer
-    button.bg-gray-400.p-2.rounded-lg.transition-colors(
-      v-for="filterOption in filterOptions"
-      :key="filterOption.value"
-      @click="setFilter(filterOption.value, $event)"
-      :class="{ 'text-white font-bold bg-black': filter === filterOption.value, 'text-white': filter !== filterOption.value }"
-      class="hover:text-orange-400 text-xl"
-    ) {{ filterOption.label }}
+.filter-container(class="flex flex-col sm:flex-row sm:space-x-5 items-center")
+  div(class="flex flex-col sm:flex-row sm:space-x-3 mb-8 items-center")
+    p(class="text-lg font-regular text-gray-400 mb-3 sm:mb-0") Filtrer
+    div(class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2")
+      button(
+        v-for="filterOption in filterOptions"
+        :key="filterOption.value"
+        @click="setFilter(filterOption.value, $event)"
+        :class=`[
+          'p-2 rounded-lg transition-colors hover:text-orange-400 text-xl',
+          filter === filterOption.value ? 'text-white font-bold bg-black' : 'text-white bg-gray-400'
+        ]`
+      ) {{ filterOption.label }}
 </template>
 
 <script lang="ts">
