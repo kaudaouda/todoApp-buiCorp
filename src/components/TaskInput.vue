@@ -27,6 +27,7 @@ import { mdiPlusCircleOutline } from '@mdi/js';
 import PopupNotification from './PopupNotification.vue';
 
 export default defineComponent({
+  name: 'TaskInput',
   components: {
     PopupNotification
   },
