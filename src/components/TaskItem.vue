@@ -1,5 +1,5 @@
 <template lang="pug">
-li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm(:class="{ 'fade-enter-active': task.completed }")
+li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm.font-poppins(:class="{ 'fade-enter-active': task.completed }")
   .flex.items-center
     input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(
       type='checkbox'
@@ -68,3 +68,9 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+</style>

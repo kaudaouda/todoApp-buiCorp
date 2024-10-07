@@ -12,6 +12,7 @@
       @click='handleAddTask'
       class='hover:bg-orange-300'
       :aria-label='buttonLabel'
+      :class="{ 'animate-bounce': isAnimating }"
     )
       icon(:path='mdiPlusCircleOutline' size='36' class='text-white')
       | {{ buttonText }}
@@ -39,18 +40,26 @@ export default defineComponent({
   emits: ['add-task'],
   setup(props, { emit }) {
     const taskInput = ref('');
+    const isAnimating = ref(false);
 
     const handleAddTask = () => {
       if (taskInput.value.trim()) {
         emit('add-task', taskInput.value.trim());
         taskInput.value = '';
+        
+        // Déclencher l'animation
+        isAnimating.value = true;
+        setTimeout(() => {
+          isAnimating.value = false;
+        }, 1000); // Durée de l'animation en millisecondes
       }
     };
 
     return {
       taskInput,
       handleAddTask,
-      mdiPlusCircleOutline
+      mdiPlusCircleOutline,
+      isAnimating
     };
   }
 });
