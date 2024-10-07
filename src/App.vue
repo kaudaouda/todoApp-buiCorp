@@ -1,11 +1,11 @@
 <script setup>
-import TodoScreen from './components/TodoScreen.vue'
-// import Splash from './components/Splash.vue'
+// import TodoScreen from './components/TodoScreen.vue'
+import Splash from './components/Splash.vue'
 </script>
 
 <template lang="pug">
   div.homePage.w-full.font-sans
-    TodoScreen
+    Splash
 </template>
 
 <style scoped>
