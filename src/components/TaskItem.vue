@@ -1,5 +1,5 @@
 <template lang="pug">
-li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm.font-poppins(:class="{ 'fade-enter-active': task.completed }")
+li.task-item.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm.font-poppins(:class="{ 'fade-enter-active': task.completed }")
   .flex.items-center
     input.form-checkbox.h-5.w-5.text-indigo-500.transition.duration-150.ease-in-out(
       type='checkbox'
@@ -28,18 +28,27 @@ li.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.shadow-sm.fo
       class='hover:bg-orange-300'
     ) Sauvegarder
     button.text-red-500.transition-colors(
-      @click='removeTask'
+      @click='confirmRemoveTask'
       class='hover:text-red-600'
     )
       icon(:path='mdiDelete' size='36' class='text-red-500')
+  PopupNotification(
+    v-if='showDeleteConfirmation'
+    :message="'La tâche a été supprimée avec succès.'"
+    @close='closeDeleteConfirmation'
+  )
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mdiPencil, mdiDelete } from '@mdi/js';
+import PopupNotification from './PopupNotification.vue';  // Assurez-vous que le chemin est correct
 
 export default defineComponent({
   name: 'TaskItem',
+  components: {
+    PopupNotification  // Déclarez le composant ici
+  },
   props: {
     task: {
       type: Object,
@@ -49,7 +58,8 @@ export default defineComponent({
   data() {
     return {
       mdiPencil,
-      mdiDelete
+      mdiDelete,
+      showDeleteConfirmation: false
     };
   },
   methods: {
@@ -62,8 +72,17 @@ export default defineComponent({
     saveTask() {
       this.$emit('save-task', this.task);
     },
+    confirmRemoveTask() {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
+        this.removeTask();
+      }
+    },
     removeTask() {
       this.$emit('remove-task', this.task.id);
+      this.showDeleteConfirmation = true;
+    },
+    closeDeleteConfirmation() {
+      this.showDeleteConfirmation = false;
     }
   }
 });
@@ -72,5 +91,9 @@ export default defineComponent({
 <style scoped>
 .font-poppins {
   font-family: 'Poppins', sans-serif;
+}
+
+.task-item {
+  min-height: 80px;
 }
 </style>
