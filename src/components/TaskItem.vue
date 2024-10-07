@@ -42,7 +42,7 @@ li.task-item.flex.justify-between.items-center.bg-gray-50.p-4.rounded-lg.mb-4.sh
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { mdiPencil, mdiDelete } from '@mdi/js';
-import PopupNotification from './PopupNotification.vue';  // Assurez-vous que le chemin est correct
+import PopupNotification from './PopupNotification.vue'; 
 
 export default defineComponent({
   name: 'TaskItem',
