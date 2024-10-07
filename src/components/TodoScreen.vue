@@ -20,7 +20,7 @@
           @remove-task='removeTask'
         )
       p.text-lg.font-bold.mt-4.text-gray-400
-        | Il ne reste {{ remainingTasksCount }} tâche(s) à compléter.
+        | Il reste {{ remainingTasksCount }} tâche(s) à compléter.
 
 
 </template>
@@ -82,8 +82,14 @@ export default {
       this.currentFilter = newFilter;
     },
     saveTasks() {
-      // Logique pour sauvegarder les tâches
-    }
+      localStorage.setItem('tasks', JSON.stringify(this.$store.state.tasks));
+    },
+    loadTasks() {
+      const savedTasks = localStorage.getItem('tasks');
+      if (savedTasks) {
+        this.$store.commit('setTasks', JSON.parse(savedTasks));
+      }
+    },
   },
   mounted() {
     this.loadTasks();
